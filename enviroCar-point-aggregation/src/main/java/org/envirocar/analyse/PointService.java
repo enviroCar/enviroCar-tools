@@ -30,6 +30,11 @@ public interface PointService {
 	
 	Point aggregate(Point point, Point aggregationPoint, String trackId);
 
+	/**
+	 * @param point the relating point
+	 * @param distance the maximum distance in meters
+	 * @return
+	 */
 	Point getNearestNeighbor(Point point, double distance);
 
 	void addToResultSet(Point newPoint);

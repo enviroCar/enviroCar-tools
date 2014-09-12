@@ -69,7 +69,7 @@ public class PostgresPointService implements PointService {
 	private String id_exp = "$id$";
 	private String distance_exp = "$distance$";
 	private String table_name_exp = "$tablename$";
-	private String geographyFromText_exp = "$geom_from_text$";
+	private String geomFromText_exp = "$geom_from_text$";
 
 	private final String speed_value_exp = "$speed_value$";
 	private final String speedNumberOfContributingPoints_value_exp = "$speedNumberOfContributingPoints_value$";
@@ -89,8 +89,8 @@ public class PostgresPointService implements PointService {
 	private String co2NumberOfContributingPointsField = co2Field+CONTRIBUTING_COUNT_SUFFIX;
 	private String speedNumberOfContributingPointsField = speedField+CONTRIBUTING_COUNT_SUFFIX;
 	private String trackIDField = "trackid";
-	private String geographyEncodedField = "the_geog";
-	private String geographyPlainTextField = "text_geog";
+	private String geometryEncodedField = "the_geom";
+	private String geometryPlainTextField = "text_geom";
 	private String distField = "dist";
 	private String aggregated_measurement_idField = "aggregated_measurement_id";
 	private String aggregation_dateField = "aggregation_date";
@@ -106,8 +106,7 @@ public class PostgresPointService implements PointService {
 			+ co2Field + " DOUBLE PRECISION," 
 			+ co2NumberOfContributingPointsField + " INTEGER, "
 			+ speedField + " DOUBLE PRECISION, " 
-			+ speedNumberOfContributingPointsField + " INTEGER,"
-	        + geographyEncodedField + " GEOGRAPHY(POINT," + spatial_ref_sys + "))";
+			+ speedNumberOfContributingPointsField + " INTEGER)";
 	
 	private final String pgMeasurementRelationsTableCreationString = "CREATE TABLE "
 			+ measurementRelationsTableName + " ("
@@ -122,19 +121,19 @@ public class PostgresPointService implements PointService {
 			+ idField + " VARCHAR(24) NOT NULL PRIMARY KEY, "
 			+ aggregation_dateField + " timestamp with time zone)";
 	
-	private String pgNearestNeighborCreationString = "select h." + idField + ", h." + speedField + ", h." + co2Field + ", h." + contribPointCountField + ", h." + speedNumberOfContributingPointsField + ", h." + co2NumberOfContributingPointsField + ", h." + contribTrackCountField + ", h." + lastContributingTrackField + ", ST_AsText(h." + geographyEncodedField + ") as " + geographyPlainTextField + ", ST_distance(" + geographyFromText_exp + ",h." + geographyEncodedField + ") as " + distField + " from " + aggregated_MeasurementsTableName + " h "
-			+ "where ST_DWithin(" + geographyFromText_exp + ",h." + geographyEncodedField + ","
+	private String pgNearestNeighborCreationString = "select h." + idField + ", h." + speedField + ", h." + co2Field + ", h." + contribPointCountField + ", h." + speedNumberOfContributingPointsField + ", h." + co2NumberOfContributingPointsField + ", h." + contribTrackCountField + ", h." + lastContributingTrackField + ", ST_AsText(h.the_geom) as " + geometryPlainTextField + ", ST_distance(" + geomFromText_exp + ",h.the_geom) as " + distField + " from " + aggregated_MeasurementsTableName + " h "
+			+ "where ST_DWithin(" + geomFromText_exp + "::geography,h." + geometryEncodedField + "::geography,"
 			+ distance_exp + ") " + "order by " + distField + " ASC;";
 
-	private final String addGeographyColumnToTableString = "SELECT AddGeographyColumn( '"
+	private final String addGeometryColumnToTableString = "SELECT AddGeometryColumn( '"
 			+ table_name_exp
-			+ "', '" + geographyEncodedField + "', " + spatial_ref_sys + ", 'POINT', 2 );";
+			+ "', '" + geometryEncodedField + "', " + spatial_ref_sys + ", 'POINT', 2 );";
 	
-	private final String selectAllAggregatedMeasurementsString = "select h." + idField + ", h." + speedField + ", h." + co2Field + ", h." + contribPointCountField + ", h." + speedNumberOfContributingPointsField + ", h." + co2NumberOfContributingPointsField + ", h." + contribTrackCountField + ", h." + lastContributingTrackField + ", ST_AsText(h." + geographyEncodedField + ") as " + geographyPlainTextField + " from " + aggregated_MeasurementsTableName + " h; ";
+	private final String selectAllAggregatedMeasurementsString = "select h." + idField + ", h." + speedField + ", h." + co2Field + ", h." + contribPointCountField + ", h." + speedNumberOfContributingPointsField + ", h." + co2NumberOfContributingPointsField + ", h." + contribTrackCountField + ", h." + lastContributingTrackField + ", ST_AsText(h.the_geom) as " + geometryPlainTextField + " from " + aggregated_MeasurementsTableName + " h; ";
 	
 	private final String deletePointFromTableString = "delete from " + table_name_exp + " where " + idField + "=";
 	
-	private final String updateAggregatedMeasurementString = "UPDATE " + aggregated_MeasurementsTableName + " SET " + speedField + " = " + speed_value_exp + ", " + speedNumberOfContributingPointsField + " = " + speedNumberOfContributingPoints_value_exp + ", " + co2Field + " = " + co2_value_exp + ", " + co2NumberOfContributingPointsField + " = " + co2NumberOfContributingPoints_value_exp + ", " + contribPointCountField + " = " + generalNumberOfContributingPoints_value_exp + ", " + contribTrackCountField + " = " + generalnumberOfContributingTracks_value_exp + ", " + lastContributingTrackField + " = '" + lastContributingTrack_value_exp + "', " + geographyEncodedField + " = " + geometryEncoded_value_exp + " WHERE " + idField + " = '" + id_exp + "';";
+	private final String updateAggregatedMeasurementString = "UPDATE " + aggregated_MeasurementsTableName + " SET " + speedField + " = " + speed_value_exp + ", " + speedNumberOfContributingPointsField + " = " + speedNumberOfContributingPoints_value_exp + ", " + co2Field + " = " + co2_value_exp + ", " + co2NumberOfContributingPointsField + " = " + co2NumberOfContributingPoints_value_exp + ", " + contribPointCountField + " = " + generalNumberOfContributingPoints_value_exp + ", " + contribTrackCountField + " = " + generalnumberOfContributingTracks_value_exp + ", " + lastContributingTrackField + " = '" + lastContributingTrack_value_exp + "', " + geometryEncodedField + " = " + geometryEncoded_value_exp + " WHERE " + idField + " = '" + id_exp + "';";
 	
 	private Geometry bbox;
 	
@@ -156,7 +155,7 @@ public class PostgresPointService implements PointService {
 	@Override
 	public Point getNearestNeighbor(Point point, double distance) {
 
-		String queryString = pgNearestNeighborCreationString.replace(distance_exp, "" + distance).replace(geographyFromText_exp, createST_GeographyFromTextStatement(point.getX(), point.getY()));
+		String queryString = pgNearestNeighborCreationString.replace(distance_exp, "" + distance).replace(geomFromText_exp, createST_GeometryFromTextStatement(point.getX(), point.getY()));
 
 		ResultSet resultSet = this.connection.executeQueryStatement(queryString);
 
@@ -204,7 +203,7 @@ public class PostgresPointService implements PointService {
 					int resultNumberOfContributingTracks = resultSet
 							.getInt(contribTrackCountField);
 
-					String resultGeomAsText = resultSet.getString(geographyPlainTextField);
+					String resultGeomAsText = resultSet.getString(geometryPlainTextField);
 
 					double[] resultXY = Utils
 							.convertWKTPointToXY(resultGeomAsText);
@@ -239,7 +238,7 @@ public class PostgresPointService implements PointService {
 		updateString = updateString.replace(generalNumberOfContributingPoints_value_exp, "" + newPoint.getNumberOfPointsUsedForAggregation());
 		updateString = updateString.replace(generalnumberOfContributingTracks_value_exp, "" + newPoint.getNumberOfTracksUsedForAggregation());
 		updateString = updateString.replace(lastContributingTrack_value_exp, newPoint.getLastContributingTrack());
-		updateString = updateString.replace(geometryEncoded_value_exp, createST_GeographyFromTextStatement(newPoint.getX(), newPoint.getY()));
+		updateString = updateString.replace(geometryEncoded_value_exp, createST_GeometryFromTextStatement(newPoint.getX(), newPoint.getY()));
 		updateString = updateString.replace(id_exp, idOfPointToBeUpdated);
 				
 		return this.connection.executeUpdateStatement(updateString);
@@ -359,10 +358,10 @@ public class PostgresPointService implements PointService {
 		insertMeasurementRelation(newPoint.getID(), newId);
 	}
 	
-	private String createST_GeographyFromTextStatement(double x, double y){
+	private String createST_GeometryFromTextStatement(double x, double y){
 		
-		return "ST_GeographyFromText('SRID=" + spatial_ref_sys + ";POINT(" + x
-				+ " " + y + ")')";		
+		return "ST_GeomFromText('POINT(" + x
+				+ " " + y + ")', " + spatial_ref_sys + ")";		
 	}
 	
 	private boolean insertMeasurementRelation(String originalID, int aggregatedID){
@@ -528,12 +527,12 @@ public class PostgresPointService implements PointService {
 		
 		try {
 			
-			String resultGeomAsText = resultSet.getString(geographyPlainTextField);
+			String resultGeomAsText = resultSet.getString(geometryPlainTextField);
 			
 			resultXY = Utils.convertWKTPointToXY(resultGeomAsText);
 			
 		} catch (SQLException e) {
-			LOGGER.info("Column " + geographyPlainTextField + " not available.");
+			LOGGER.info("Column " + geometryPlainTextField + " not available.");
 			LOGGER.error(e.getMessage());
 		}
 		
@@ -564,9 +563,9 @@ public class PostgresPointService implements PointService {
 					/*
 					 * add geometry column
 					 */
-//					if (addToGeometryColumnTable){
-//						this.connection.executeStatement(addGeographyColumnToTableString.replace(table_name_exp, tableName));
-//					}
+					if (addToGeometryColumnTable){
+						this.connection.executeStatement(addGeometryColumnToTableString.replace(table_name_exp, tableName));
+					}
 					
 				} else {
 					LOGGER.error("Could not create table " + tableName + ".");
@@ -603,7 +602,7 @@ public class PostgresPointService implements PointService {
 
 	private PreparedStatement createInsertPointStatement(Point point) throws SQLException {
 		String columnNameString = "( "+
-			geographyEncodedField +", "+
+			geometryEncodedField +", "+
 			contribPointCountField +", "+
 			contribTrackCountField +", "+
 			lastContributingTrackField +", ";
