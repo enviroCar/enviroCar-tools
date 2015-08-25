@@ -81,7 +81,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>envirocar-wps</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -90,6 +89,15 @@
 				</includes>
 			</resource>
 		</resources>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-surefire-plugin</artifactId>
+                                <version>2.17</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -126,46 +134,4 @@
 		</plugins>
 	</build>
 
-	<profiles>
-		<profile>
-			<id>default-tests</id>
-			<activation>
-				<property>
-					<name>!no-default-tests</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.17</version>
-						<configuration>
-							<excludes>
-								<exclude>*/**/AggregateAllTracksTest.java</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>aggregate-all-tracks</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.17</version>
-						<configuration>
-							<includes>
-								<include>*/**/AggregateAllTracksTest.java</include>
-							</includes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-	
 </project>

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,44 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.envirocar.analyse;
+package org.envirocar.operations;
 
 import java.io.IOException;
 
 import org.apache.http.client.ClientProtocolException;
-import org.envirocar.harvest.ProgressListener;
-import org.envirocar.harvest.TrackHarvester;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class AggregateAllTracksTest {
-
-	private static final Logger logger = LoggerFactory.getLogger(AggregateAllTracksTest.class);
-	
-	@Test
-	public void harvest() throws ClientProtocolException, IOException {
-		final AggregationAlgorithm algo = new AggregationAlgorithm();
-		TrackHarvester harv = new TrackHarvester("", new ProgressListener() {
-			@Override
-			public void onProgressUpdate(float progressPercent) {
-				logger.info("Progress: "+progressPercent);
-			}
-		}) {
-			@Override
-			public void readAndPushTrack(String id)
-					throws ClientProtocolException, IOException {
-				try {
-					algo.runAlgorithm(id);
-				} 
-				catch (IOException e) {
-					logger.warn(e.getMessage(), e);
-				}
-			}
-		};
-		
-		harv.harvestTracks();
-	}
-	
+public class PushAllTracks extends AbstractAllTracksProcessor {
+    
+    private static final Logger logger = LoggerFactory.getLogger(PushAllTracks.class);
+    
+    @Test
+    public void push() throws ClientProtocolException, IOException {
+        String targetUrl = System.getProperty("push.all.tracks.target");
+        
+        if (targetUrl == null || targetUrl.isEmpty()) {
+            throw new IllegalStateException("Provide the maven property 'push.all.tracks.target'");
+        }
+        
+        super.process(targetUrl);
+    }
+    
 }

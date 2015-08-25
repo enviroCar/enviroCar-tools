@@ -63,7 +63,7 @@ import com.vividsolutions.jts.geom.Point;
 @Algorithm(version = "1.0.0")
 public class DataTransformProcess extends AbstractAnnotatedAlgorithm {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(DataTransformProcessTest.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(DataTransformProcess.class);
 
 	private SimpleFeatureTypeBuilder typeBuilder;
 
