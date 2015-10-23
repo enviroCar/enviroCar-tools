@@ -71,7 +71,7 @@ public class AggregatedTracksServlet extends HttpServlet {
 		this.aggregatedTracksTableName = (String) Properties
 				.getProperty("aggregatedTracksTableName");
 		this.query = "SELECT * FROM " + this.aggregatedTracksTableName
-				+ " ORDER BY id DESC LIMIT 100";
+				+ " ORDER BY id DESC";
 		this.trackQuery = "SELECT * FROM "+ this.aggregatedTracksTableName +" WHERE id = '%s'";
 
 		TimeZone tz = TimeZone.getTimeZone("UTC");
