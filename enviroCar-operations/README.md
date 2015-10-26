@@ -7,6 +7,8 @@ All tools are based on JUnit tests and corresponding maven profiles
 
 * `all.tracks.firstid`: The first track ID to be considered.
 * `all.tracks.lastid`: The last track ID to be considered.
+* `all.tracks.list`: a comma-separated list of track IDs to be considered. When
+this property is provided, the above are ignored
 
 ## Aggregate tracks to postgis database
 
