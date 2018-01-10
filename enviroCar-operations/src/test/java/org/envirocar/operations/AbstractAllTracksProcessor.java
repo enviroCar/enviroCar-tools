@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractAllTracksProcessor {
     
      
-    private static final Logger logger = LoggerFactory.getLogger(AggregateAllTracks.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractAllTracksProcessor.class);
     private boolean withinTrackIdWindow = true;
     private String firstTrackId;
     private String lastTrackId;

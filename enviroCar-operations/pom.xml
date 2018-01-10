@@ -50,9 +50,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.envirocar.analyse</groupId>
-            <artifactId>envirocar-point-aggregation</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.envirocar.processing</groupId>
+            <artifactId>point-aggregation</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
