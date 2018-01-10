@@ -69,7 +69,7 @@ function addCar(car) {
 		
 		if (equals(c, car)) {
 			exists = true;
-			idToDistinct[car._id.toString()] = c._id.toString();
+			idToDistinct[car._id.valueOf()] = c._id.toString();
 		}
 	});
 	
